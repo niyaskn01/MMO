@@ -11,7 +11,6 @@ import {
 import { useEffect, useState, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header, Footer } from '@/components/marketplace/shell';
 import { supabase } from '@/integrations/supabase/client';
 import {useServerFn} from '@tanstack/react-start';
@@ -41,11 +40,8 @@ function NotFoundComponent() {
 }
 
 function ErrorComponent({ error, reset }: ErrorComponentProps) {
-  console.error(error);
+  console.error("Application error:", error);
   const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -77,7 +73,6 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
     </div>
   );
 }
-
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   staticData: { sitemap: false },
   head: () => ({

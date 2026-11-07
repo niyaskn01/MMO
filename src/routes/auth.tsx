@@ -5,7 +5,6 @@ import { getAccountAccess } from '@/lib/marketplace/data.functions';
 import { accountDestination } from '@/lib/marketplace/availability';
 import { accountEmail, signupDetails } from '@/lib/marketplace/account-validation';
 import { supabase } from '@/integrations/supabase/client';
-import { lovable } from '@/integrations/lovable';
 import { meta } from '@/lib/marketplace/assets';
 import { Button } from '@/components/ui/button';
 import { PasswordField } from '@/components/marketplace/password-field';
