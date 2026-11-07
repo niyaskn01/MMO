@@ -1,0 +1,29 @@
+# Travel marketplace MVP
+- [x] Keep companions prominent and replace public stay/destination options with experiences
+- [x] Support experience listings, uploaded photos, requests and administrator editing without changing existing stays
+- [x] Verify public navigation, authenticated experience requests and regression tests
+- [x] Require sign-in for requests while preserving public browsing
+- [x] Lock request identity to the signed-in email and verify submission safeguards
+- [x] Premium home, destination and marketplace browsing
+- [x] Stay and companion details, filters, safety and supporting pages
+- [x] Cloud data, sample listings, enquiry persistence and confirmation
+- [x] Protected admin management and request statuses
+- [x] Multiple uploaded listing photos with first-photo covers and detail galleries
+- [x] Verify stay and guide uploads, saved covers, visitor galleries and regression tests
+- [x] Verify marketplace rules and end-to-end enquiries
+- [x] Assign permanent administrator access to the owner's signed-in account
+- [x] Correct signed-in navigation and verify administrator management with the owner's account
+- [x] Verify saved sign-in survives refresh and browser reopening, and sign-out clears saved session storage
+- [x] Role-aware sign-in destinations and account navigation
+- [x] Replace known-choice text fields with selections
+- [x] Confirmed date reservations, admin assignments and public availability
+- [x] Verify role-routing rules, administrator navigation and reservation lifecycle
+- [x] Remove duplicate page-data loads and unnecessary sign-in refetches
+- [x] Reduce photo transfer sizes and verify signed-in page navigation
+- [x] Remove WhatsApp redirect and verify the original on-site request confirmation
+- [x] Add email signup profile name, password visibility and strength checks without invoking Google
+- [x] Verify profile creation, account form interactions and password rules
+- [x] Edit listing values and ordered photos, delete listings
+- [x] Manage administrator access securely
+- [x] Verify authenticated management flows and tests
+- [x] Update homepage browser title and replace browser icon with the existing brand compass

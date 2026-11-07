@@ -1,0 +1,2 @@
+import {createFileRoute} from '@tanstack/react-router';import {InfoPage} from '@/components/marketplace/info';import {meta} from '@/lib/marketplace/assets';
+export const Route=createFileRoute('/how-it-works')({staticData:{sitemap:true},head:()=>meta('How meetmeoutside works','Browse outdoor experiences and verified local guides, then send your travel enquiry.'),component:()=> <InfoPage page="how-it-works"/>});

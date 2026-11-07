@@ -1,0 +1,2 @@
+import {createFileRoute,redirect} from '@tanstack/react-router';import {meta} from '@/lib/marketplace/assets';
+export const Route=createFileRoute('/destinations/$city')({staticData:{sitemap:false},head:({params})=>meta(`Local companions in ${params.city}`,'Explore with verified local guides and travel companions.'),beforeLoad:({params})=>{throw redirect({to:'/companions',search:{destination:params.city},statusCode:302})}});

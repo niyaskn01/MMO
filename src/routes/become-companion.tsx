@@ -1,0 +1,2 @@
+import {createFileRoute} from '@tanstack/react-router';import {InfoPage} from '@/components/marketplace/info';import {meta} from '@/lib/marketplace/assets';
+export const Route=createFileRoute('/become-companion')({staticData:{sitemap:true},head:()=>meta('Become a local guide','Share your local travel knowledge and apply to become an independent meetmeoutside guide.'),component:()=> <InfoPage page="become-companion"/>});

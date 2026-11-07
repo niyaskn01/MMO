@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <style>:root{--logo-primary:oklch(.39 .074 165);--logo-surface:oklch(.99 .004 90)}</style>
+  <rect width="48" height="48" rx="10" fill="var(--logo-surface)"/>
+  <g fill="none" stroke="var(--logo-primary)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="24" cy="24" r="17"/>
+    <path d="m31.2 16.8-4.8 9.6-9.6 4.8 4.8-9.6z"/>
+  </g>
+</svg>

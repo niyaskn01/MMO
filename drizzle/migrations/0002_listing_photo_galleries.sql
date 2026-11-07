@@ -1,0 +1,5 @@
+ALTER TABLE public.stays ADD COLUMN images text[] NOT NULL DEFAULT '{}';
+ALTER TABLE public.companions ADD COLUMN images text[] NOT NULL DEFAULT '{}';
+CREATE POLICY "admin_upload_listing_images" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'listing-images' AND public.is_admin());
+CREATE POLICY "admin_delete_listing_images" ON storage.objects FOR DELETE TO authenticated USING (bucket_id = 'listing-images' AND public.is_admin());
+CREATE POLICY "read_visible_listing_images" ON storage.objects FOR SELECT TO anon, authenticated USING (bucket_id = 'listing-images' AND (public.is_admin() OR EXISTS (SELECT 1 FROM public.stays s WHERE s.active AND storage.objects.name = ANY(s.images)) OR EXISTS (SELECT 1 FROM public.companions c WHERE c.verification = 'Verified' AND c.age >= 18 AND storage.objects.name = ANY(c.images))));

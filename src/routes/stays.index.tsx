@@ -1,0 +1,2 @@
+import {createFileRoute,redirect} from '@tanstack/react-router';import {browseSearch} from '@/components/marketplace/browse';import {meta} from '@/lib/marketplace/assets';
+export const Route=createFileRoute('/stays/')({staticData:{sitemap:false},head:()=>meta('Explore experiences','Outdoor activities and adventures with meetmeoutside.'),validateSearch:browseSearch,beforeLoad:()=>{throw redirect({to:'/experiences',statusCode:301})}});

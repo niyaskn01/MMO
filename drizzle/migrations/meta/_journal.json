@@ -1,0 +1,48 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1791478279691,
+      "tag": "0000_travel_marketplace",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791553222990,
+      "tag": "0001_confirmed_listing_reservations",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791567373963,
+      "tag": "0002_listing_photo_galleries",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1791635817770,
+      "tag": "0003_account_profiles",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1791637411777,
+      "tag": "0004_admin_account_and_listing_management",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1791640537703,
+      "tag": "0005_scope_public_catalog_related_rows",
+      "breakpoints": true
+    }
+  ]
+}

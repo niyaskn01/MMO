@@ -1,0 +1,12 @@
+import experiences from '@/assets/experiences.jpg';
+import kerala from '@/assets/kerala-hero.webp';
+import munnar from '@/assets/munnar.webp';
+import kochi from '@/assets/kochi.webp';
+import varkala from '@/assets/varkala.webp';
+import stay from '@/assets/stay.webp';
+import woman from '@/assets/guide-woman.webp';
+import man from '@/assets/guide-man.webp';
+export const images: Record<string,string> = {experiences,kerala,munnar,kochi,varkala,stay,'guide-woman':woman,'guide-man':man};
+export const imageFor = (key:string) => images[key] ?? (key.startsWith('https://') ? key : stay);
+export const money = (value:number) => `₹${value.toLocaleString('en-IN')}`;
+export const meta = (title:string, description:string) => {const browserTitle=title==='meetmeoutside'?title:`${title} — meetmeoutside`;return {meta:[{title:browserTitle},{name:'description',content:description},{property:'og:title',content:browserTitle},{property:'og:description',content:description},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary_large_image'}]}};

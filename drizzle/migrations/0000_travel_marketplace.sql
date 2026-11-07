@@ -1,0 +1,60 @@
+CREATE TABLE public.user_roles (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE, role text NOT NULL CHECK(role IN ('admin','user')), UNIQUE(user_id,role));
+GRANT SELECT ON public.user_roles TO authenticated; GRANT ALL ON public.user_roles TO service_role;
+ALTER TABLE public.user_roles ENABLE ROW LEVEL SECURITY;
+CREATE POLICY own_role ON public.user_roles FOR SELECT TO authenticated USING(user_id=auth.uid());
+CREATE FUNCTION public.is_admin() RETURNS boolean LANGUAGE sql STABLE SECURITY DEFINER SET search_path=public AS $$ SELECT EXISTS(SELECT 1 FROM public.user_roles WHERE user_id=auth.uid() AND role='admin') $$;
+REVOKE ALL ON FUNCTION public.is_admin() FROM PUBLIC; GRANT EXECUTE ON FUNCTION public.is_admin() TO authenticated;
+CREATE TABLE public.destinations (id text PRIMARY KEY, name text NOT NULL, image text NOT NULL, description text NOT NULL);
+GRANT SELECT ON public.destinations TO anon; GRANT ALL ON public.destinations TO authenticated,service_role;
+ALTER TABLE public.destinations ENABLE ROW LEVEL SECURITY;
+CREATE POLICY public_destinations ON public.destinations FOR SELECT USING(true);
+CREATE POLICY admin_destinations ON public.destinations FOR ALL TO authenticated USING(public.is_admin()) WITH CHECK(public.is_admin());
+CREATE TABLE public.stays (id text PRIMARY KEY DEFAULT gen_random_uuid()::text, name text NOT NULL, city text NOT NULL REFERENCES public.destinations(id), description text NOT NULL DEFAULT '', property_type text NOT NULL DEFAULT 'Homestay', price integer NOT NULL CHECK(price>0), rating numeric NOT NULL DEFAULT 0, review_count integer NOT NULL DEFAULT 0, image text NOT NULL DEFAULT 'stay', amenities text[] NOT NULL DEFAULT '{}', rooms text NOT NULL DEFAULT 'Garden room · 1 queen bed · Private bathroom', house_rules text NOT NULL DEFAULT 'Check-in 2 PM. Check-out 11 AM. No smoking indoors.', host text NOT NULL DEFAULT 'Local host', contact text NOT NULL DEFAULT '', active boolean NOT NULL DEFAULT true, is_demo boolean NOT NULL DEFAULT false);
+GRANT SELECT ON public.stays TO anon; GRANT ALL ON public.stays TO authenticated,service_role;
+ALTER TABLE public.stays ENABLE ROW LEVEL SECURITY;
+CREATE POLICY public_stays ON public.stays FOR SELECT USING(active);
+CREATE POLICY admin_stays ON public.stays FOR ALL TO authenticated USING(public.is_admin()) WITH CHECK(public.is_admin());
+CREATE TABLE public.companions (id text PRIMARY KEY DEFAULT gen_random_uuid()::text, name text NOT NULL, age integer NOT NULL CHECK(age>=18), city text NOT NULL REFERENCES public.destinations(id), gender text NOT NULL DEFAULT '', image text NOT NULL DEFAULT 'guide-man', about text NOT NULL DEFAULT '', languages text[] NOT NULL DEFAULT '{}', interests text[] NOT NULL DEFAULT '{}', services text[] NOT NULL DEFAULT '{}', experience integer NOT NULL DEFAULT 1, price integer NOT NULL CHECK(price>0), hourly_price integer NOT NULL DEFAULT 300, rating numeric NOT NULL DEFAULT 0, trips integer NOT NULL DEFAULT 0, availability text NOT NULL DEFAULT 'Available on selected dates', verification text NOT NULL DEFAULT 'Pending Verification' CHECK(verification IN ('Pending Verification','Verified','Rejected','Inactive')), is_demo boolean NOT NULL DEFAULT false);
+GRANT SELECT ON public.companions TO anon; GRANT ALL ON public.companions TO authenticated,service_role;
+ALTER TABLE public.companions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY verified_adults ON public.companions FOR SELECT USING(verification='Verified' AND age>=18);
+CREATE POLICY admin_companions ON public.companions FOR ALL TO authenticated USING(public.is_admin()) WITH CHECK(public.is_admin());
+CREATE TABLE public.booking_requests (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), kind text NOT NULL CHECK(kind IN ('stay','companion','host','guide','report','contact')), listing_id text, listing_name text NOT NULL DEFAULT '', name text NOT NULL, email text NOT NULL, phone text NOT NULL, destination text NOT NULL DEFAULT '', travel_date date, duration integer NOT NULL DEFAULT 1 CHECK(duration>0), travelers integer NOT NULL DEFAULT 1 CHECK(travelers>0), message text NOT NULL DEFAULT '', status text NOT NULL DEFAULT 'New' CHECK(status IN ('New','Contacted','Confirmed','Cancelled','Completed')), created_at timestamptz NOT NULL DEFAULT now(), amount integer NOT NULL DEFAULT 0, payment_id text, payment_status text NOT NULL DEFAULT 'not_requested', commission integer NOT NULL DEFAULT 0, refund_status text NOT NULL DEFAULT 'none');
+GRANT SELECT,UPDATE ON public.booking_requests TO authenticated; GRANT ALL ON public.booking_requests TO service_role;
+ALTER TABLE public.booking_requests ENABLE ROW LEVEL SECURITY;
+CREATE POLICY admin_requests ON public.booking_requests FOR ALL TO authenticated USING(public.is_admin()) WITH CHECK(public.is_admin());
+CREATE TABLE public.reviews (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), stay_id text REFERENCES public.stays(id), companion_id text REFERENCES public.companions(id), traveler_name text NOT NULL, rating integer NOT NULL CHECK(rating BETWEEN 1 AND 5), review text NOT NULL, created_at timestamptz NOT NULL DEFAULT now(), is_demo boolean NOT NULL DEFAULT false);
+GRANT SELECT ON public.reviews TO anon; GRANT ALL ON public.reviews TO authenticated,service_role;
+ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
+CREATE POLICY public_reviews ON public.reviews FOR SELECT USING(true);
+CREATE POLICY admin_reviews ON public.reviews FOR ALL TO authenticated USING(public.is_admin()) WITH CHECK(public.is_admin());
+INSERT INTO public.destinations(id,name,image,description) VALUES ('kochi','Kochi','kochi','Heritage lanes, art cafés and waterfront sunsets.'),('munnar','Munnar','munnar','Slow mornings among tea gardens and misty mountains.'),('varkala','Varkala','varkala','Cliffside cafés, golden beaches and ocean breezes.'),('alappuzha','Alappuzha','kerala','Palm-lined backwaters and unhurried village life.'),('wayanad','Wayanad','munnar','Forest trails, waterfalls and quiet hill retreats.'),('vagamon','Vagamon','munnar','Rolling meadows and mountain adventures.'),('thekkady','Thekkady','munnar','Spice gardens and lush forest landscapes.'),('kovalam','Kovalam','varkala','Lighthouse views and beautiful coastal stays.');
+INSERT INTO public.stays(id,name,city,price,rating,review_count,image,property_type,amenities,description,is_demo) VALUES
+('forest-edge','Forest Edge Homestay','munnar',1800,4.9,48,'stay','Homestay',ARRAY['WiFi','Breakfast','Parking','Solo traveler friendly'],'Wake up to tea gardens, birdsong and fresh local breakfasts in this peaceful hill hideaway.',true),
+('hidden-backwater','Hidden Backwater Villa','alappuzha',2500,4.8,36,'kerala','Villa',ARRAY['WiFi','AC','Kitchen','Parking'],'A quiet waterfront villa with a private veranda and beautiful backwater views.',true),
+('cliffside','Cliffside Stay','varkala',2200,4.9,62,'varkala','Guest House',ARRAY['WiFi','AC','Breakfast'],'Ocean breezes and relaxed mornings, a short walk from the cliff promenade.',true),
+('heritage-courtyard','Heritage Courtyard','kochi',1600,4.8,41,'kochi','Homestay',ARRAY['WiFi','AC','Breakfast'],'A restored heritage home near Fort Kochi cafés and galleries.',true),
+('tea-trails','Tea Trails Cottage','munnar',2800,4.7,28,'stay','Villa',ARRAY['WiFi','Parking','Kitchen'],'A tranquil cottage in the green hills.',true),
+('palm-house','Palm House','alappuzha',1500,4.6,24,'stay','Homestay',ARRAY['WiFi','Breakfast'],'A welcoming village home surrounded by palms.',true),
+('coast-hostel','Coast Hostel','varkala',800,4.7,86,'varkala','Hostel',ARRAY['WiFi','Kitchen','Solo traveler friendly'],'Friendly shared spaces and easy beach access.',true),
+('forest-hideaway','Forest Hideaway','wayanad',3200,4.9,35,'stay','Resort',ARRAY['Pool','WiFi','Parking','Breakfast'],'A quiet nature retreat nestled in the forest.',true),
+('meadow-home','Meadow Home','vagamon',1900,4.8,19,'stay','Homestay',ARRAY['Parking','Breakfast'],'Cozy rooms overlooking misty meadows.',true),
+('spice-garden','Spice Garden Retreat','thekkady',2400,4.8,31,'stay','Resort',ARRAY['WiFi','Pool','Breakfast'],'A garden stay surrounded by aromatic spice plantations.',true),
+('lighthouse-house','Lighthouse House','kovalam',2100,4.7,44,'varkala','Guest House',ARRAY['WiFi','AC'],'A laid-back coastal guesthouse.',true),
+('art-house','The Art House','kochi',2700,4.9,53,'kochi','Hotel',ARRAY['WiFi','AC','Breakfast'],'Art-filled interiors in the heart of Fort Kochi.',true),
+('misty-peaks','Misty Peaks Lodge','munnar',1400,4.6,21,'stay','Guest House',ARRAY['Parking','Breakfast'],'Mountain views and comforting local food.',true),
+('bamboo-grove','Bamboo Grove','wayanad',2600,4.8,33,'stay','Villa',ARRAY['WiFi','Kitchen','Parking'],'A private cottage beside a bamboo grove.',true),
+('hill-hostel','Hill Hostel','vagamon',700,4.7,47,'stay','Hostel',ARRAY['WiFi','Kitchen','Solo traveler friendly'],'An easygoing base for hill walks and adventure.',true);
+INSERT INTO public.companions(id,name,age,city,image,about,languages,interests,services,experience,price,rating,trips,availability,verification,is_demo) VALUES
+('aisha','Aisha',27,'kochi','guide-woman','Love exploring hidden cafés, local food spots and less touristy places around Kochi.',ARRAY['English','Malayalam','Hindi'],ARRAY['Food','Photography','Culture'],ARRAY['Food Guide','City Explorer'],4,1200,4.9,32,'Weekends','Verified',true),
+('arjun','Arjun',30,'munnar','guide-man','Join me on scenic tea trails and discover the stories behind these beautiful hills.',ARRAY['English','Malayalam'],ARRAY['Nature','Adventure','Photography'],ARRAY['Adventure Guide','Photography Guide'],6,1500,4.9,68,'Available','Verified',true),
+('meera','Meera',26,'varkala','guide-woman','Discover coastal walks, quiet beaches and my favourite local cafés.',ARRAY['English','Hindi','Malayalam'],ARRAY['Beaches','Food','Local Culture'],ARRAY['Travel Companion','Food Guide'],3,1000,4.8,24,'Available on selected dates','Verified',true),
+('rahul','Rahul',29,'alappuzha','guide-man','Explore village life and the peaceful backwaters with a local perspective.',ARRAY['English','Malayalam'],ARRAY['Nature','Culture'],ARRAY['Local Guide'],5,1300,4.8,46,'Available','Verified',true),
+('devika','Devika',28,'wayanad','guide-woman','Forest trails and local traditions are my favourite way to experience Wayanad.',ARRAY['English','Malayalam','Hindi'],ARRAY['Nature','Culture'],ARRAY['Culture Guide'],4,1400,4.9,38,'Weekends','Verified',true),
+('nikhil','Nikhil',31,'vagamon','guide-man','Let us explore the meadows and gentle trails of Vagamon.',ARRAY['English','Malayalam'],ARRAY['Adventure','Nature'],ARRAY['Adventure Guide'],5,1200,4.7,42,'Available','Verified',true),
+('sana','Sana',25,'kochi','guide-woman','I share stories of old Kochi through heritage walks and local food.',ARRAY['English','Hindi','Malayalam'],ARRAY['History','Food'],ARRAY['Culture Guide','Food Guide'],3,1100,4.8,29,'Weekends','Verified',true),
+('vishnu','Vishnu',32,'thekkady','guide-man','A local guide passionate about spice gardens and nature.',ARRAY['English','Malayalam','Tamil'],ARRAY['Nature','Local Culture'],ARRAY['Local Guide'],7,1600,4.9,81,'Available','Verified',true),
+('anjali','Anjali',26,'kovalam','guide-woman','Discover the coast through photography walks and local cafés.',ARRAY['English','Malayalam'],ARRAY['Photography','Beaches'],ARRAY['Photography Guide'],3,1200,4.8,23,'Available on selected dates','Verified',true),
+('rohan','Rohan',28,'munnar','guide-man','Slow travel, tea stories and mountain photography.',ARRAY['English','Hindi','Malayalam'],ARRAY['Photography','Nature'],ARRAY['Photography Guide'],4,1400,4.8,37,'Available','Verified',true);
+INSERT INTO public.reviews(stay_id,traveler_name,rating,review,is_demo) VALUES('forest-edge','Riya',5,'Beautiful property and peaceful location.',true);
+INSERT INTO public.reviews(companion_id,traveler_name,rating,review,is_demo) VALUES('aisha','Aditya',5,'Very helpful during our Kochi trip. Showed us places we would never have found ourselves.',true);

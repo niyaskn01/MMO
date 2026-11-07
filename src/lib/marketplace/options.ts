@@ -1,0 +1,10 @@
+export const destinationOptions=['Kochi','Munnar','Varkala','Alappuzha','Wayanad','Vagamon','Thekkady','Kovalam'];
+export const propertyTypes=['Homestay','Villa','Resort','Hotel','Hostel','Guest House'];
+export const amenityOptions=['WiFi','Parking','Breakfast','AC','Pool','Kitchen','Solo traveler friendly','Family friendly','Couple friendly'];
+export const languageOptions=['English','Malayalam','Hindi','Tamil','Kannada'];
+export const interestOptions=['Food','Photography','Culture','Nature','Adventure','Beaches','History','Local Culture','Nightlife','Shopping','Cafe Hopping'];
+export const serviceOptions=['Local Guide','Travel Companion','Food Guide','Photography Guide','Adventure Guide','Culture Guide','City Explorer'];
+export const availabilityOptions=['Available','Weekends','Available on selected dates','Currently unavailable'];
+export const activityOptions=['Kayaking','Boating','Go Karting','Hiking','Slack Lines'];
+export const isExperience=(listing:{property_type:string})=>Boolean(listing.property_type.trim())&&!propertyTypes.some(type=>type.toLowerCase()===listing.property_type.trim().toLowerCase());
+export const experienceCategories=(listings:{property_type:string}[])=>[...new Set(listings.filter(isExperience).map(listing=>listing.property_type.trim()))].sort((a,b)=>a.localeCompare(b));
