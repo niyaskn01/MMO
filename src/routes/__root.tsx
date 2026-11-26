@@ -73,35 +73,93 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
     </div>
   );
 }
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  staticData: { sitemap: false },
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "meetmeoutside" },
-      { name: "description", content: "Beautiful Kerala stays and professional local travel guides." },
-      { name: "author", content: "meetmeoutside" },
-      { name: "google-site-verification", content: "4cih4Qq9fPkjXV1-3RgTnewxQraxXo7iqFJlPxKejS0" },
-      { property: "og:title", content: "meetmeoutside" },
-      { property: "og:description", content: "Beautiful Kerala stays and professional local travel guides." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-      { rel: "icon", href: "/meetmeoutside-logo.svg", type: "image/svg+xml" },
-      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;650;700;800&display=swap' },
-    ],
-  }),
-  shellComponent: RootShell,
-  component: RootComponent,
-  notFoundComponent: NotFoundComponent,
-  errorComponent: ErrorComponent,
-});
+  export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+    staticData: { sitemap: false },
+
+    head: () => ({
+      meta: [
+        { charSet: "utf-8" },
+        {
+          name: "viewport",
+          content: "width=device-width, initial-scale=1",
+        },
+        {
+          title: "Meet Me Outside (MeetMeOutside) | Travel Companions & Local Guides",
+        },
+        {
+          name: "description",
+          content: "Meet Me Outside (MeetMeOutside) is an Indian travel platform to find like-minded travel companions, connect with local guides and explore new destinations together.",
+        },
+        {
+          name: "author",
+          content: "MeetMeOutside",
+        },
+        {
+          name: "google-site-verification",
+          content: "4cih4Qq9fPkjXV1-3RgTnewxQraxXo7iqFJlPxKejS0",
+        },
+        {
+          property: "og:title",
+          content: "Meet Me Outside | Find Your Travel Companion",
+        },
+        {
+          property: "og:description",
+          content: "Find travel companions, meet new people and explore India with MeetMeOutside.",
+        },
+        {
+          property: "og:site_name",
+          content: "MeetMeOutside",
+        },
+        {
+          property: "og:type",
+          content: "website",
+        },
+        {
+          property: "og:url",
+          content: "https://www.meetmeoutside.in/",
+        },
+        {
+          name: "twitter:card",
+          content: "summary_large_image",
+        },
+      ],
+
+      links: [
+        {
+          rel: "stylesheet",
+          href: appCss,
+        },
+        {
+          rel: "icon",
+          href: "/meetmeoutside-logo.svg",
+          type: "image/svg+xml",
+          sizes: "any",
+        },
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;650;700;800&display=swap",
+        },
+      ],
+
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "MeetMeOutside",
+            alternateName: "Meet Me Outside",
+            url: "https://www.meetmeoutside.in/",
+          }),
+        },
+      ],
+    }),
+
+    shellComponent: RootShell,
+    component: RootComponent,
+    notFoundComponent: NotFoundComponent,
+    errorComponent: ErrorComponent,
+  });
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
