@@ -12,10 +12,17 @@ export const Route = createFileRoute("/")({
   staticData: { sitemap: true },
   head: () => ({
     ...meta(
-      "meetmeoutside",
-      "Discover verified local travel companions and outdoor experiences in Kerala.",
+      "Meet Me Outside (MeetMeOutside) | Travel Companions & Local Guides",
+      "Meet Me Outside (MeetMeOutside) is an Indian travel platform to find like-minded travel companions, connect with local guides and explore new destinations together.",
     ),
-    links: [{ rel: "preload", as: "image", href: images["kerala"], fetchPriority: "high" }],
+    links: [
+      {
+        rel: "preload",
+        as: "image",
+        href: images["kerala"],
+        fetchPriority: "high",
+      },
+    ],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(catalogQuery),
   component: Home,
